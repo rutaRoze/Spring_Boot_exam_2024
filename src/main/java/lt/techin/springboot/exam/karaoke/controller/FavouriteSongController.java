@@ -5,10 +5,13 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lt.techin.springboot.exam.karaoke.modal.request.FavouriteSongRequest;
 import lt.techin.springboot.exam.karaoke.modal.response.FavouriteSongResponse;
+import lt.techin.springboot.exam.karaoke.persistance.modal.FavouriteSongRecord;
 import lt.techin.springboot.exam.karaoke.service.FavouriteSongService;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -22,24 +25,25 @@ public class FavouriteSongController {
     public FavouriteSongResponse getUserFavouriteSongs(
             @RequestParam @UUID String uuid
     ) {
-        return favouriteSongService.findFavouriteSongsByUser(uuid);
+        return favouriteSongService.findSongsByUserUuid(uuid);
     }
+
 
     @PostMapping
-    public void recordReaction(
+    public FavouriteSongResponse addFavouriteSongsForUser(
             @RequestParam @UUID String uuid,
-            @RequestBody @Valid FavouriteSongRequest favouriteSongRequest
+            @RequestBody @Valid List<FavouriteSongRecord> songs
 
-    ) {
-        favouriteSongService.saveFavouriteSong(uuid, favouriteSongRequest);
+            ) {
+       return favouriteSongService.addNewSongsByUserUuid(uuid, songs);
     }
 
-    @DeleteMapping
-    public void deleteFavouriteSong(
-            @RequestParam @UUID String uuid,
-            @RequestBody @Valid FavouriteSongRequest favouriteSongRequest
-
-    ) {
-        favouriteSongService.deleteFavouriteSong(uuid, favouriteSongRequest);
-    }
+//    @DeleteMapping
+//    public void deleteFavouriteSong(
+//            @RequestParam @UUID String uuid,
+//            @RequestBody @Valid FavouriteSongRequest favouriteSongRequest
+//
+//    ) {
+//        favouriteSongService.deleteFavouriteSong(uuid, favouriteSongRequest);
+//    }
 }

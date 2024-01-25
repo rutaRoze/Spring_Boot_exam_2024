@@ -20,14 +20,14 @@ public class UserNotFoundExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-
-    public ResponseEntity<UserErrorResponse> handleException(Exception exception) {
-
-        UserErrorResponse errorResponse = new UserErrorResponse();
-
-        errorResponse.setMessage(exception.getMessage());
-        errorResponse.setCause(String.valueOf(exception.getCause()));
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler({UserNotFoundException.class})
+//    public ResponseEntity<UserErrorResponse> handleException(Exception exception) {
+//
+//        UserErrorResponse errorResponse = new UserErrorResponse();
+//
+//        errorResponse.setMessage(exception.getMessage());
+//        errorResponse.setCause(String.valueOf(exception.getCause()));
+//
+//        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+//    }
 }

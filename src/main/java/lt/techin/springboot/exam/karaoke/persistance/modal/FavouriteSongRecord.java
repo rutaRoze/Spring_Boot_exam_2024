@@ -1,22 +1,26 @@
 package lt.techin.springboot.exam.karaoke.persistance.modal;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Entity
-@Table(name="favourite_songs")
+@Table(name = "favourite_songs")
 public class FavouriteSongRecord {
 
-
     @Id
-    @Column(name = "uuid")
-    private String uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @JsonIgnore
+    private int id;
 
     @Column(name = "artist_name")
     private String artistName;
@@ -24,4 +28,41 @@ public class FavouriteSongRecord {
     @Column(name = "song_title")
     private String songTitle;
 
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinTable(name = "user_song",
+            joinColumns = @JoinColumn(name = "song_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_uuid"))
+    private List<UserRecord> users = new ArrayList<>();
+
+    public FavouriteSongRecord() {
+    }
+
+    public FavouriteSongRecord(String artistName, String songTitle) {
+        this.artistName = artistName;
+        this.songTitle = songTitle;
+    }
+
+    public void addUser(UserRecord user) {
+        if(users == null) {
+            users = new ArrayList<>();
+        }
+
+        users.add(user);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FavouriteSongRecord that = (FavouriteSongRecord) o;
+        return Objects.equals(artistName.toLowerCase().strip(), that.artistName.toLowerCase().strip())
+                && Objects.equals(songTitle.toLowerCase().strip(), that.songTitle.toLowerCase().strip());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(artistName.toLowerCase().strip(), songTitle.toLowerCase().strip());
+    }
 }

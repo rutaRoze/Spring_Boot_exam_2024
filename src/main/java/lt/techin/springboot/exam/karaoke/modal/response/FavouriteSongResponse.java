@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lt.techin.springboot.exam.karaoke.persistance.modal.FavouriteSongRecord;
+import lt.techin.springboot.exam.karaoke.persistance.modal.UserRecord;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,7 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FavouriteSongResponse {
 
-    private String artistName;
+    private String username;
 
-    private String songTitle;
+    private List<FavouriteSongRecord> songs;
+
 }
