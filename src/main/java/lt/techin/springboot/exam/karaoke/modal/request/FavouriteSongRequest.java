@@ -1,19 +1,17 @@
 package lt.techin.springboot.exam.karaoke.modal.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
-import lt.techin.springboot.exam.karaoke.persistance.modal.FavouriteSongRecord;
-
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class FavouriteSongRequest {
 
     @NotBlank
-    List<FavouriteSongRecord> songs;
+    private String artistName;
+
+    @NotBlank
+    private String songTitle;
 
 }

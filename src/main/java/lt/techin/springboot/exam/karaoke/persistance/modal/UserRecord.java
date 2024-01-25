@@ -22,7 +22,7 @@ public class UserRecord {
     private String username;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinTable(name = "user_song",
             joinColumns = @JoinColumn(name = "user_uuid"),
             inverseJoinColumns = @JoinColumn(name = "song_id"))
