@@ -1,33 +1,42 @@
 package lt.techin.springboot.exam.karaoke.exception;
 
-import lt.techin.springboot.exam.karaoke.modal.response.UserErrorResponse;
+import jakarta.validation.ConstraintViolationException;
+import lt.techin.springboot.exam.karaoke.modal.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class UserNotFoundExceptionHandler {
 
-    @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exception) {
-
-        UserErrorResponse errorResponse = new UserErrorResponse();
-
-        errorResponse.setMessage(exception.getMessage());
-        errorResponse.setCause(String.valueOf(exception.getCause()));
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    @ExceptionHandler({ConstraintViolationException.class})
+    protected ResponseEntity<ErrorResponse> handle(ConstraintViolationException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .cause(exception.getConstraintViolations().toString())
+                        .build()
+                );
     }
 
-//    @ExceptionHandler({UserNotFoundException.class})
-//    public ResponseEntity<UserErrorResponse> handleException(Exception exception) {
-//
-//        UserErrorResponse errorResponse = new UserErrorResponse();
-//
-//        errorResponse.setMessage(exception.getMessage());
-//        errorResponse.setCause(String.valueOf(exception.getCause()));
-//
-//        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler({HttpMessageConversionException.class, MethodArgumentNotValidException.class})
+    protected ResponseEntity<ErrorResponse> handle(Exception exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler({UserNotFoundException.class})
+    protected ResponseEntity<ErrorResponse> handle(UserNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .build()
+                );
+    }
+
 }

@@ -1,12 +1,12 @@
 package lt.techin.springboot.exam.karaoke.modal.response;
 
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class UserErrorResponse {
+@Builder
+public class ErrorResponse {
 
     private String message;
     private String cause;
