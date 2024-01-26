@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface FavouriteSongRepository extends JpaRepository<FavouriteSongRecord, Integer> {
 
-    Optional<FavouriteSongRecord> findByArtistNameAndSongTitle(String artistName, String songTitle);
+    Optional<FavouriteSongRecord> findByArtistNameAndSongTitleIgnoreCase(String artistName, String songTitle);
 
 }

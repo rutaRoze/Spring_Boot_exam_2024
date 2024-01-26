@@ -27,22 +27,25 @@ public class FavouriteSongController {
         return favouriteSongService.findSongsByUserUuid(uuid);
     }
 
-
     @PostMapping
     public FavouriteSongResponse addFavouriteSongsForUser(
             @RequestParam @UUID String uuid,
             @RequestBody @Valid List<FavouriteSongRequest> favouriteSongRequestList
 
     ) {
-        return favouriteSongService.addNewSongsByUserUuid(uuid, favouriteSongRequestList);
+        favouriteSongService.addNewSongsByUserUuid(uuid, favouriteSongRequestList);
+
+        return favouriteSongService.findSongsByUserUuid(uuid);
     }
 
-//    @DeleteMapping
-//    public void deleteFavouriteSong(
-//            @RequestParam @UUID String uuid,
-//            @RequestBody @Valid FavouriteSongRequest favouriteSongRequest
-//
-//    ) {
-//        favouriteSongService.deleteFavouriteSong(uuid, favouriteSongRequest);
-//    }
+    @DeleteMapping
+    public FavouriteSongResponse deleteFavouriteSong(
+            @RequestParam @UUID String uuid,
+            @RequestBody @Valid List<FavouriteSongRequest> favouriteSongRequestList
+
+    ) {
+        favouriteSongService.deleteFavouriteSongsByUser(uuid, favouriteSongRequestList);
+
+        return favouriteSongService.findSongsByUserUuid(uuid);
+    }
 }

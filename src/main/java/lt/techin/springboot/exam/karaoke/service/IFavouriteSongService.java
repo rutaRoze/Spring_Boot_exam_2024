@@ -9,5 +9,9 @@ public interface IFavouriteSongService {
 
     FavouriteSongResponse findSongsByUserUuid(String uuid);
 
-   FavouriteSongResponse addNewSongsByUserUuid(String uuid, List<FavouriteSongRequest> favouriteSongRequestList);
+    void addNewSongsByUserUuid(
+            String uuid, List<FavouriteSongRequest> songRequestListToAdd);
+
+   void deleteFavouriteSongsByUser(
+            String uuid, List<FavouriteSongRequest> songRequestListToDelete);
 }

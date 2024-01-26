@@ -4,8 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import lt.techin.springboot.exam.karaoke.modal.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageConversionException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -22,17 +20,18 @@ public class UserNotFoundExceptionHandler {
                 );
     }
 
-    @ExceptionHandler({HttpMessageConversionException.class, MethodArgumentNotValidException.class})
-    protected ResponseEntity<ErrorResponse> handle(Exception exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.builder()
-                        .message(exception.getMessage())
-                        .build());
-    }
-
     @ExceptionHandler({UserNotFoundException.class})
     protected ResponseEntity<ErrorResponse> handle(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler({NoEntriesFoundException.class})
+    protected ResponseEntity<ErrorResponse> handle(NoEntriesFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
                         .message(exception.getMessage())
                         .build()
