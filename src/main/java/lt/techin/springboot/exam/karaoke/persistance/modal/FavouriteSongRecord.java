@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -46,17 +45,4 @@ public class FavouriteSongRecord {
         users.add(user);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FavouriteSongRecord that = (FavouriteSongRecord) o;
-        return Objects.equals(artistName.toLowerCase().strip(), that.artistName.toLowerCase().strip())
-                && Objects.equals(songTitle.toLowerCase().strip(), that.songTitle.toLowerCase().strip());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(artistName.toLowerCase().strip(), songTitle.toLowerCase().strip());
-    }
 }

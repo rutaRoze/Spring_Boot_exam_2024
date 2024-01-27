@@ -13,7 +13,7 @@ import lt.techin.springboot.exam.karaoke.persistance.modal.UserRecord;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -53,9 +53,10 @@ public class FavouriteSongService implements IFavouriteSongService {
                 user.addSongs(song);
                 song.addUser(user);
 
-                userRepository.save(user);
             }
         }
+
+        userRepository.save(user);
     }
 
     @Override
@@ -65,25 +66,30 @@ public class FavouriteSongService implements IFavouriteSongService {
                 .orElseThrow(() -> new UserNotFoundException(uuid));
 
         List<FavouriteSongRecord> currentUserSongs = user.getSongs();
+        boolean foundAtLeastOneSongToDelete = false;
 
         if (currentUserSongs.isEmpty()) {
             throw new NoEntriesFoundException("No favourites to delete for user - " + user.getUsername());
         }
 
-        List<FavouriteSongRecord> songsForDeletion = songRequestListToDelete
-                .stream()
-                .map(requestSong -> new FavouriteSongRecord(
-                        requestSong.getArtistName().toLowerCase().strip(),
-                        requestSong.getSongTitle().toLowerCase().strip()
-                ))
-                .filter(songToDelete -> currentUserSongs.contains(songToDelete))
-                .collect(Collectors.toList());
+        for (FavouriteSongRequest songRequest : songRequestListToDelete) {
 
-        if (songsForDeletion.isEmpty()) {
-            throw new NoEntriesFoundException("No matching favourites to delete for user - " + user.getUsername());
+            String artistName = songRequest.getArtistName().strip();
+            String songTitle = songRequest.getSongTitle().strip();
+
+            Optional<FavouriteSongRecord> song = favouriteSongRepository
+                    .findByArtistNameAndSongTitleAllIgnoreCase(artistName, songTitle);
+
+            if (song.isPresent()) {
+                foundAtLeastOneSongToDelete = true;
+                currentUserSongs.remove(song.get());
+                song.get().getUsers().remove(user);
+            }
         }
 
-        currentUserSongs.removeAll(songsForDeletion);
+        if (!foundAtLeastOneSongToDelete) {
+            throw new NoEntriesFoundException("No matching favourites to delete for user - " + user.getUsername());
+        }
 
         userRepository.save(user);
     }
