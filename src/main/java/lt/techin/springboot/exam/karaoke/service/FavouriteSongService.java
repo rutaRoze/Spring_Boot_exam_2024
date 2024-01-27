@@ -42,12 +42,12 @@ public class FavouriteSongService implements IFavouriteSongService {
 
         for (FavouriteSongRequest favouriteSongRequest : songRequestListToAdd) {
 
-            String artistName = favouriteSongRequest.getArtistName();
-            String songTitle = favouriteSongRequest.getSongTitle();
+            String artistName = favouriteSongRequest.getArtistName().strip();
+            String songTitle = favouriteSongRequest.getSongTitle().strip();
 
             FavouriteSongRecord song = favouriteSongRepository
-                    .findByArtistNameAndSongTitleIgnoreCase(artistName, songTitle)
-                    .orElseGet(() -> favouriteSongRepository.save(new FavouriteSongRecord(artistName, songTitle)));
+                    .findByArtistNameAndSongTitleAllIgnoreCase(artistName, songTitle)
+                    .orElseGet(() -> new FavouriteSongRecord(artistName, songTitle));
 
             if (!user.getSongs().contains(song)) {
                 user.addSongs(song);
@@ -64,27 +64,26 @@ public class FavouriteSongService implements IFavouriteSongService {
         UserRecord user = userRepository.findById(uuid)
                 .orElseThrow(() -> new UserNotFoundException(uuid));
 
-        List<FavouriteSongRecord> currentUserSongsInTheList = user.getSongs();
+        List<FavouriteSongRecord> currentUserSongs = user.getSongs();
 
-        if (currentUserSongsInTheList.isEmpty()) {
+        if (currentUserSongs.isEmpty()) {
             throw new NoEntriesFoundException("No favourites to delete for user - " + user.getUsername());
         }
 
         List<FavouriteSongRecord> songsForDeletion = songRequestListToDelete
                 .stream()
-                .map(requestSongToDelete -> new FavouriteSongRecord(
-                        requestSongToDelete.getArtistName().toLowerCase().strip(),
-                        requestSongToDelete.getSongTitle().toLowerCase().strip()
+                .map(requestSong -> new FavouriteSongRecord(
+                        requestSong.getArtistName().toLowerCase().strip(),
+                        requestSong.getSongTitle().toLowerCase().strip()
                 ))
-                .filter(songToDelete -> currentUserSongsInTheList.contains(songToDelete))
+                .filter(songToDelete -> currentUserSongs.contains(songToDelete))
                 .collect(Collectors.toList());
 
         if (songsForDeletion.isEmpty()) {
-            throw new NoEntriesFoundException("Favourites entries do not match given request for user - " + user.getUsername());
+            throw new NoEntriesFoundException("No matching favourites to delete for user - " + user.getUsername());
         }
 
-        currentUserSongsInTheList.removeAll(songsForDeletion);
-        user.setSongs(currentUserSongsInTheList);
+        currentUserSongs.removeAll(songsForDeletion);
 
         userRepository.save(user);
     }

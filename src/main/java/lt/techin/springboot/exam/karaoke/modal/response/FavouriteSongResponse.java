@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lt.techin.springboot.exam.karaoke.persistance.modal.FavouriteSongRecord;
-import lt.techin.springboot.exam.karaoke.persistance.modal.UserRecord;
 
 import java.util.List;
 
